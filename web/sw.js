@@ -1,8 +1,8 @@
 /* REMIXT · Service Worker mínimo: app shell offline, API siempre en red. */
-const CACHE = 'remixt-shell-v1';
+const CACHE = 'remixt-shell-v2';
 const SHELL = [
   './', './index.html', './login.html', './chofer.html', './pasajero.html',
-  './styles.css', './portal.css', './config.js', './app-config.js',
+  './styles.css', './portal.css', './config.js',
   './auth.js', './app.js', './login.js', './chofer.js', './portal.js',
   './manifest.webmanifest', './apple-touch-icon.png', './icon-192.png', './icon-512.png',
 ];
@@ -10,7 +10,7 @@ const SHELL = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE)
-      .then((cache) => cache.addAll(SHELL))
+      .then((cache) => Promise.all(SHELL.map((url) => cache.add(url).catch(() => {}))))
       .then(() => self.skipWaiting()),
   );
 });
