@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>REMIXT · Chofer</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%23165BE5%27/%3E%3Cpath d=%27M10 23V9h6a5 5 0 0 1 0 10h-3l5 4%27 fill=%27none%27 stroke=%27white%27 stroke-width=%272.4%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="portal.css" />
+</head>
+<body class="portal">
+  <div class="phone phone--dark">
+    <header class="phone__top">
+      <span class="logo">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2.5c-6.1 0-11 4.8-11 10.8C5 21 16 29.5 16 29.5S27 21 27 13.3C27 7.3 22.1 2.5 16 2.5Z" fill="none" stroke="#ffb219" stroke-width="3"/><path d="M10.5 15.5l1.1-3.3a1.6 1.6 0 0 1 1.5-1.1h5.8a1.6 1.6 0 0 1 1.5 1.1l1.1 3.3v2.7h-11v-2.7Z" fill="currentColor"/></svg>
+        <strong>REMI<span>XT</span></strong>
+      </span>
+      <span class="conn" id="conn"><i></i><span>Conectando…</span></span>
+    </header>
+
+    <main class="phone__body" id="main"></main>
+
+    <nav class="tabbar" id="tabbar" aria-label="Secciones">
+      <button type="button" class="is-active" data-tab="viajes">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 17h14M4 13l1.6-5.2A2 2 0 0 1 7.5 6.5h9a2 2 0 0 1 1.9 1.3L20 13v4H4v-4Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7.5" cy="17" r="1.6" fill="currentColor"/><circle cx="16.5" cy="17" r="1.6" fill="currentColor"/></svg>
+        Viajes
+      </button>
+      <button type="button" data-tab="mapa">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6.5v13L9 17l6 2.5 6-2.5V4l-6 2.5L9 4Zm0 0v13m6-10.5v13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Mapa
+      </button>
+      <button type="button" data-tab="perfil">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M4 21a8 8 0 0 1 16 0" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+        Perfil
+      </button>
+    </nav>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="auth.js"></script>
+  <script src="portal.js"></script>
+  <script src="chofer.js"></script>
+</body>
+</html>

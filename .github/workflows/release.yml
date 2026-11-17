@@ -1,0 +1,39 @@
+name: Release APK
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Android SDK
+        run: |
+          yes | sdkmanager --licenses > /dev/null || true
+          sdkmanager --install "platforms;android-36" "build-tools;36.0.0" > /dev/null
+      - run: npm ci
+      - name: Build APK
+        env:
+          REMIXT_API_URL: ${{ vars.REMIXT_API_URL || secrets.REMIXT_API_URL }}
+          REMIXT_WS_URL: ${{ vars.REMIXT_WS_URL || secrets.REMIXT_WS_URL || '' }}
+        run: npm run build
+      - name: Publicar Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/remixt-app-chofer.apk \
+            --title "REMIXT Chofer $GITHUB_REF_NAME" \
+            --generate-notes

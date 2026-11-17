@@ -1,0 +1,9 @@
+{
+  "appId": "com.bidego.remixt.chofer",
+  "appName": "REMIXT Chofer",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "http"
+  },
+  "loggingBehavior": "none"
+}

@@ -1,0 +1,36 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Android SDK
+        run: |
+          yes | sdkmanager --licenses > /dev/null || true
+          sdkmanager --install "platforms;android-36" "build-tools;36.0.0" > /dev/null
+      - run: npm ci
+      - name: Build
+        env:
+          REMIXT_API_URL: ${{ vars.REMIXT_API_URL || 'http://localhost:3001' }}
+          REMIXT_WS_URL: ${{ vars.REMIXT_WS_URL || '' }}
+        run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: remixt-app-chofer-apk
+          path: dist/remixt-app-chofer.apk
+          if-no-files-found: error
