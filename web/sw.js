@@ -1,9 +1,14 @@
 /* REMIXT · Service Worker: network-first, cache offline, auto-update. */
-const CACHE = 'remixt-shell-v5';
+const CACHE = 'remixt-shell-v6';
 const SHELL = [
   './', './index.html', './login.html', './chofer.html', './pasajero.html',
-  './styles.css', './portal.css', './config.js', './version.js',
-  './auth.js', './app.js', './login.js', './chofer.js', './portal.js', './pwa.js',
+  './styles.css', './portal.css', './config.js', './app-config.js', './version.js',
+  './vendor/leaflet/leaflet.css', './vendor/leaflet/leaflet.js',
+  './vendor/leaflet/images/marker-icon.png', './vendor/leaflet/images/marker-icon-2x.png',
+  './vendor/leaflet/images/marker-shadow.png', './vendor/leaflet/images/layers.png',
+  './vendor/leaflet/images/layers-2x.png',
+  './auth.js', './app.js', './login.js', './chofer.js', './pasajero.js',
+  './portal.js', './pwa.js', './geo.js',
   './manifest.webmanifest', './manifest-chofer.webmanifest',
   './apple-touch-icon.png', './icon-192.png', './icon-512.png',
 ];

@@ -5,6 +5,7 @@
    ============================================================ */
 (function () {
   const Auth = window.RemixtAuth;
+  const Geo = window.RemixGeo;
   const {
     $, escapeHtml, money, iniciales, telHref, mapaHref, estadoTag, toast, conBoton,
   } = window.RemixtUI;
@@ -15,12 +16,17 @@
   if (!Auth.exigir(ROL)) return;
 
   const state = { chofer: null, viajes: [], tab: 'viajes', firma: '', vistos: null, error: '' };
+  const geoMapa = Geo ? Geo.crear() : null;
+  let watchId = null;
 
   const api = (method, path, body) => Auth.api(method, path, body, { rol: ROL, onUnauthorized: () => Auth.irALogin(ROL) });
   const km = (v) => new Intl.NumberFormat('es-AR', { maximumFractionDigits: 1 }).format(Number(v.distanciaKm || 0));
   const minutos = (v) => Math.max(1, Math.round(Number(v.distanciaKm || 0) * 2));
   const viajeActual = () => state.viajes.find((v) => v.estado === 'en_curso')
     || state.viajes.find((v) => v.estado === 'asignado') || null;
+  const viajeEnCurso = () => state.viajes.find((v) => v.estado === 'en_curso') || null;
+  let idRastreando = null;
+  let ultimoEnvio = 0;
 
   /* ---------- Datos ---------- */
   async function cargar({ forzar = false } = {}) {
@@ -48,6 +54,8 @@
 
     state.chofer = chofer;
     state.viajes = viajes;
+    if (geoMapa) geoMapa.actualizar(viajeActual());
+    actualizarTracking();
     const firma = JSON.stringify([chofer.estado, chofer.viajesHoy, chofer.rating, viajes.map((v) => [v.id, v.estado, v.aceptado])]);
     if (!forzar && firma === state.firma) return;
     state.firma = firma;
@@ -81,12 +89,14 @@
       return `<h1>Viaje en curso</h1>${rutaHtml(v)}${pasajeroHtml(v)}${datosHtml(v)}
         <div class="driver-screen__actions">
           <button class="btn btn--success btn--block" type="button" data-accion="finalizar" data-id="${escapeHtml(v.id)}">Finalizar viaje</button>
+          <button class="btn btn--outline btn--block" type="button" data-accion="verMapa">● Ver recorrido en vivo</button>
         </div>`;
     }
     if (v.aceptado) {
       return `<h1>Pasajero esperando</h1>${rutaHtml(v)}${pasajeroHtml(v)}${datosHtml(v)}
         <div class="driver-screen__actions">
           <button class="btn btn--success btn--block" type="button" data-accion="iniciar" data-id="${escapeHtml(v.id)}">Iniciar viaje</button>
+          <button class="btn btn--outline btn--block" type="button" data-accion="verMapa">Ver recorrido</button>
           <button class="link-btn" type="button" data-accion="rechazar" data-id="${escapeHtml(v.id)}">No puedo realizarlo</button>
         </div>`;
     }
@@ -138,8 +148,8 @@
     }
     return `<div class="driver-screen"><h1>Recorrido</h1>${rutaHtml(actual)}${datosHtml(actual)}
       <div class="driver-screen__actions">
-        <a class="btn btn--primary btn--block" target="_blank" rel="noopener" href="${escapeHtml(mapaHref(actual.origen, actual.destino))}">Abrir recorrido en Google Maps</a>
-        <a class="btn btn--outline btn--block" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(actual.origen)}">Ir al punto de origen</a>
+        <button class="btn btn--primary btn--block" type="button" data-accion="verMapa">Abrir mapa en vivo</button>
+        <a class="btn btn--outline btn--block" target="_blank" rel="noopener" href="${escapeHtml(mapaHref(actual.origen, actual.destino))}">Abrir en Google Maps</a>
       </div></div>`;
   }
 
@@ -197,6 +207,44 @@
     $('#main').scrollTop = 0;
   }
 
+  /* ---------- Seguimiento GPS (sólo mientras el viaje está en curso) ---------- */
+  function detenerGps() {
+    if (watchId !== null && navigator.geolocation) navigator.geolocation.clearWatch(watchId);
+    watchId = null;
+    idRastreando = null;
+  }
+
+  function actualizarTracking() {
+    const viaje = viajeEnCurso();
+    if (!viaje) { if (watchId !== null) detenerGps(); return; }
+    if (watchId !== null && idRastreando === viaje.id) return;
+    if (watchId !== null) detenerGps();
+    if (!navigator.geolocation) {
+      toast('Este dispositivo no puede informar tu ubicación', 'error');
+      return;
+    }
+    idRastreando = viaje.id;
+    ultimoEnvio = 0;
+    watchId = navigator.geolocation.watchPosition(async (pos) => {
+      const ahora = Date.now();
+      if (ahora - ultimoEnvio < 5000) return;
+      ultimoEnvio = ahora;
+      const viajeId = idRastreando;
+      try {
+        await api('POST', `/api/mi/viajes/${viajeId}/ubicacion`, {
+          lat: pos.coords.latitude,
+          lon: pos.coords.longitude,
+          precision: pos.coords.accuracy,
+        });
+      } catch (err) {
+        // Si el viaje terminó, el próximo ciclo detiene el watcher.
+      }
+    }, (err) => {
+      detenerGps();
+      toast(err.code === 1 ? 'Activá el permiso de ubicación para el seguimiento' : 'No se pudo obtener tu ubicación', 'error');
+    }, { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 });
+  }
+
   /* ---------- Acciones ---------- */
   const ACCIONES = {
     aceptar: { texto: 'Aceptando…', run: (id) => api('POST', `/api/mi/viajes/${id}/aceptar`), ok: '✓ Viaje aceptado' },
@@ -247,6 +295,13 @@
     const tab = event.target.closest('#tabbar button[data-tab]');
     if (tab) { setTab(tab.dataset.tab); return; }
     const boton = event.target.closest('[data-accion]');
+    if (boton?.dataset.accion === 'verMapa') {
+      const v = viajeActual();
+      if (v && geoMapa) geoMapa.abrir(v);
+      else toast('Todavía no hay un recorrido para mostrar', 'error');
+      return;
+    }
+    if (event.target.closest('[data-geo="cerrar"]') && geoMapa) { geoMapa.cerrar(); return; }
     if (!boton) return;
     if (boton.dataset.accion === 'salir') { Auth.salir(ROL); return; }
     ejecutar(boton);
@@ -259,7 +314,10 @@
   });
 
   const socket = Auth.conectar(ROL, {
-    onMensaje: (msg) => { if (msg.type !== 'hello') cargar(); },
+    onMensaje: (msg) => {
+      if (msg.type === 'viaje:ubicacion') return;
+      if (msg.type !== 'hello') cargar();
+    },
     onEstado: (enVivo) => {
       const conn = $('#conn');
       conn.classList.toggle('is-live', enVivo);
