@@ -1,6 +1,6 @@
 {
   "name": "remixt-app-chofer",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "private": true,
   "description": "App Android del chofer de REMIXT (Capacitor)",
   "scripts": {
