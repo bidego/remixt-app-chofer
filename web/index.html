@@ -3,10 +3,522 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>REMIXT Chofer</title>
-  <script>
-    location.replace(localStorage.getItem('remixt:sesion:chofer') ? 'chofer.html' : 'login.html?rol=chofer');
-  </script>
+  <meta name="theme-color" content="#165be5" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="REMIXT" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <title>REMIXT · Gestión Integral de Remises</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23165BE5'/%3E%3Cpath d='M10 23V9h6a5 5 0 0 1 0 10h-3l5 4' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <meta name="description" content="Sistema integral de gestión y despacho de remises. Tu remis, siempre cerca." />
+  <link rel="stylesheet" href="styles.css" />
 </head>
-<body></body>
+<body>
+  <!-- ============ APP SHELL ============ -->
+  <div class="app-shell">
+
+    <!-- ---------- SIDEBAR ---------- -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__brand">
+        <div class="brand__mark">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 8h13a6 6 0 0 1 0 12h-6l7 7M6 8l7 7M6 8v16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="brand__text">
+          <strong>REMIXT</strong>
+          <span>Sistema de despacho</span>
+        </div>
+      </div>
+
+      <div class="sidebar__group-label">OPERACIONES</div>
+      <nav class="sidebar__nav" aria-label="Navegación principal">
+        <button class="nav-item is-active" data-view="operaciones">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+          <span>Operaciones</span>
+          <span class="nav-item__badge" id="navOperacionesBadge">0</span>
+        </button>
+        <button class="nav-item" data-view="reservas">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v3M16 2v3M3 9h18M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Reservas</span>
+          <span class="nav-item__badge nav-item__badge--amber" id="navReservasBadge">0</span>
+        </button>
+        <button class="nav-item" data-view="choferes">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M4 21a8 8 0 0 1 16 0" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+          <span>Choferes</span>
+        </button>
+        <button class="nav-item" data-view="vehiculos">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 17h14M6 17v2M18 17v2M4 13l1.6-5.2A2 2 0 0 1 7.5 6.5h9a2 2 0 0 1 1.9 1.3L20 13v3H4v-3Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7.5" cy="17" r="1.6" fill="currentColor"/><circle cx="16.5" cy="17" r="1.6" fill="currentColor"/></svg>
+          <span>Vehículos</span>
+        </button>
+        <button class="nav-item" data-view="clientes">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.4" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M17 11a3 3 0 0 0 0-6M18 14a5 5 0 0 1 3.5 4.8" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+          <span>Clientes</span>
+        </button>
+
+        <div class="sidebar__group-label sidebar__group-label--spaced">GESTIÓN</div>
+        <button class="nav-item" data-view="liquidaciones">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M3 10h18M7 15h4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+          <span>Liquidaciones</span>
+        </button>
+        <button class="nav-item" data-view="informes">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+          <span>Informes</span>
+        </button>
+        <button class="nav-item" data-view="configuracion">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+          <span>Configuración</span>
+        </button>
+      </nav>
+
+      <div class="sidebar__user">
+        <div class="avatar" id="userAvatar">—</div>
+        <div class="user-meta">
+          <strong id="userNombre">—</strong>
+          <span>Operador</span>
+        </div>
+        <button class="icon-btn icon-btn--sm" id="passwordBtn" type="button" aria-label="Cambiar mi clave" title="Cambiar mi clave">
+          <svg viewBox="0 0 24 24"><circle cx="8" cy="14" r="4" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="m11 11 8-8m-3 3 2.5 2.5M14 8l2 2" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+        </button>
+        <button class="icon-btn icon-btn--sm" id="logoutBtn" type="button" aria-label="Cerrar sesión" title="Cerrar sesión">
+          <svg viewBox="0 0 24 24"><path d="M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4M15 8l4 4-4 4M19 12H9" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </aside>
+    <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
+    <!-- ---------- MAIN ---------- -->
+    <div class="main-wrap">
+
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
+          <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <div class="topbar__title">
+          <h1 id="viewTitle">Operaciones</h1>
+          <p id="viewSubtitle">Gestión y despacho en tiempo real</p>
+        </div>
+        <div class="topbar__actions">
+          <div class="system-pill"><span class="pulse"></span><span id="systemStatus">Sistema</span> <span class="system-pill__date" id="systemClock">—</span></div>
+          <span class="api-badge api-badge--loading" id="apiBadge">Conectando…</span>
+          <div class="notif-wrap">
+            <button class="icon-btn" id="notifBtn" aria-label="Notificaciones" aria-expanded="false">
+              <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 8h18s-3-1-3-8M13.7 21a2 2 0 0 1-3.4 0" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span class="notif-dot" id="notifDot" hidden></span>
+            </button>
+            <div class="notif-panel" id="notifPanel" hidden>
+              <div class="notif-panel__head"><strong>Actividad reciente</strong><span id="notifCount">0</span></div>
+              <div class="notif-panel__list" id="notifList"></div>
+            </div>
+          </div>
+          <button class="icon-btn" id="helpBtn" aria-label="Ayuda">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M9.5 9a2.6 2.6 0 1 1 3.4 2.5c-.7.3-.9.8-.9 1.5M12 17h.01" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- ============================================================
+           VIEW: OPERACIONES (Dashboard principal)
+           ============================================================ -->
+      <section class="view is-active" id="view-operaciones">
+        <!-- KPI ROW -->
+        <div class="kpi-grid">
+          <article class="kpi-card">
+            <div class="kpi-card__icon kpi-card__icon--blue">
+              <svg viewBox="0 0 24 24"><path d="M5 17h14M6 17v2M18 17v2M4 13l1.6-5.2A2 2 0 0 1 7.5 6.5h9a2 2 0 0 1 1.9 1.3L20 13v3H4v-3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="kpi-card__body">
+              <span class="kpi-card__label">Viajes hoy</span>
+              <div class="kpi-card__value"><span id="kpiViajes">—</span> <span class="kpi-card__delta kpi-card__delta--muted" id="kpiViajesDelta">—</span></div>
+            </div>
+            <div class="kpi-spark kpi-spark--blue"></div>
+          </article>
+          <article class="kpi-card">
+            <div class="kpi-card__icon kpi-card__icon--green">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5 20a7 7 0 0 1 14 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+            <div class="kpi-card__body">
+              <span class="kpi-card__label">Choferes disponibles</span>
+              <div class="kpi-card__value"><span id="kpiChoferes">—</span> <span class="kpi-card__delta kpi-card__delta--muted">de <span id="kpiTotalChoferes">—</span></span></div>
+            </div>
+            <div class="kpi-spark kpi-spark--green"></div>
+          </article>
+          <article class="kpi-card">
+            <div class="kpi-card__icon kpi-card__icon--amber">
+              <svg viewBox="0 0 24 24"><path d="M12 2v20M17 6.5c0-2-2.2-3-5-3s-5 1-5 3 2 2.7 5 3.5 5 1.6 5 3.7-2.2 3.3-5 3.3-5-1.3-5-3.3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+            <div class="kpi-card__body">
+              <span class="kpi-card__label">Facturación hoy</span>
+              <div class="kpi-card__value"><span id="kpiFacturacion">—</span> <span class="kpi-card__delta kpi-card__delta--muted" id="kpiFacturacionDelta">—</span></div>
+            </div>
+            <div class="kpi-spark kpi-spark--amber"></div>
+          </article>
+          <article class="kpi-card">
+            <div class="kpi-card__icon kpi-card__icon--red">
+              <svg viewBox="0 0 24 24"><path d="M12 8v5M12 17h.01M10.3 3.9 2.6 17.4A2 2 0 0 0 4.3 20h15.4a2 2 0 0 0 1.7-2.6L13.7 3.9a2 2 0 0 0-3.4 0Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="kpi-card__body">
+              <span class="kpi-card__label">Solicitudes pendientes</span>
+              <div class="kpi-card__value"><span id="kpiPendientes">—</span> <span class="kpi-card__delta kpi-card__delta--muted" id="kpiPendientesDelta">—</span></div>
+            </div>
+            <div class="kpi-spark kpi-spark--red"></div>
+          </article>
+        </div>
+
+        <!-- DASHBOARD GRID -->
+        <div class="dash-grid">
+
+          <!-- VIAJES EN CURSO -->
+          <article class="panel panel--dark">
+            <div class="panel__head">
+              <div>
+                <h2>Viajes en curso</h2>
+                <p class="panel__sub">Monitoreo en tiempo real de la flota</p>
+              </div>
+              <button class="btn btn--ghost btn--sm" id="refreshBtn">
+                <svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Actualizar
+              </button>
+            </div>
+
+            <div class="panel__toolbar">
+              <div class="searchbox">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="m20 20-3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+                <input type="text" id="viajeSearch" placeholder="Buscar por cliente, dirección o VJ..." aria-label="Buscar viajes" />
+              </div>
+              <div class="tabs" id="viajeTabs">
+                <button class="tab is-active" data-filter="todos">Todos <span id="cntTodos">0</span></button>
+                <button class="tab" data-filter="curso">En curso <span id="cntCurso">0</span></button>
+                <button class="tab" data-filter="pendiente">Pendientes <span id="cntPendiente">0</span></button>
+                <button class="tab" data-filter="finalizado">Finalizadas <span id="cntFinalizado">0</span></button>
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table class="data-table" id="viajesTable">
+                <thead>
+                  <tr>
+                    <th>Viaje</th>
+                    <th>Pasajero</th>
+                    <th>Origen → Destino</th>
+                    <th>Chofer</th>
+                    <th>Hora</th>
+                    <th>Estado</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="viajesBody"></tbody>
+              </table>
+            </div>
+            <div class="panel__foot">
+              <span id="viajesCount">Cargando viajes…</span>
+              <div class="pagination" id="viajesPagination"></div>
+            </div>
+          </article>
+
+          <!-- SIDE PANEL: NUEVA SOLICITUD + DETALLE -->
+          <div class="side-stack">
+
+            <article class="panel panel--dark panel--request">
+              <div class="panel__head panel__head--tight">
+                <div>
+                  <h2>Nueva solicitud</h2>
+                  <p class="panel__sub">Cargá los datos del pasajero</p>
+                </div>
+                <span class="tag tag--amber" id="requestTag">Sin asignar</span>
+              </div>
+              <div class="segmented" id="requestType">
+                <button class="seg is-active" data-tipo="inmediata">Inmediata</button>
+                <button class="seg" data-tipo="reserva">Reserva</button>
+                <button class="seg" data-tipo="corporativo" id="segCorporativo">Corporativo</button>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="reqPasajero">Pasajero</label>
+                  <div class="field__input"><input id="reqPasajero" type="text" placeholder="Nombre y apellido" autocomplete="off" /></div>
+                </div>
+                <div class="field">
+                  <label for="reqTelefono">Teléfono</label>
+                  <div class="field__input"><input id="reqTelefono" type="tel" placeholder="711 000 0000" autocomplete="off" /></div>
+                </div>
+              </div>
+              <div class="field">
+                <label for="reqOrigen">Origen</label>
+                <div class="field__input"><span class="dot dot--origin"></span><input id="reqOrigen" type="text" placeholder="Dirección de origen" autocomplete="off" /></div>
+              </div>
+              <div class="field">
+                <label for="reqDestino">Destino</label>
+                <div class="field__input"><span class="dot dot--dest"></span><input id="reqDestino" type="text" placeholder="Dirección de destino" autocomplete="off" /></div>
+              </div>
+              <div class="request-actions">
+                <button class="btn btn--primary" id="autoAssignBtn">
+                  <svg viewBox="0 0 24 24"><path d="m12 3 2.2 5.8L20 11l-5.8 2.2L12 19l-2.2-5.8L4 11l5.8-2.2L12 3Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+                  Asignar automáticamente
+                </button>
+                <button class="btn btn--ghost" id="solicitarBtn">Solicitar viaje</button>
+              </div>
+            </article>
+
+            <article class="panel panel--dark panel--detail">
+              <div class="panel__head panel__head--tight">
+                <div>
+                  <h2>Detalle del viaje</h2>
+                  <p class="panel__sub" id="detailSub">Sin viaje seleccionado</p>
+                </div>
+                <span class="tag tag--gray" id="detailTag">—</span>
+              </div>
+
+              <div class="person">
+                <div class="person__avatar" id="detailPaxAvatar">—</div>
+                <div class="person__info"><strong id="detailPasajero">—</strong><span id="detailTelefono">Pasajero · —</span></div>
+                <button class="icon-btn icon-btn--sm" id="llamarBtn" aria-label="Llamar al pasajero" disabled><svg viewBox="0 0 24 24"><path d="M6 3h4l2 5-2.5 1.5a12 12 0 0 0 5 5L16 12l5 2v4a2 2 0 0 1-2.2 2A16 16 0 0 1 4 5.2 2 2 0 0 1 6 3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+              </div>
+              <div class="person">
+                <div class="person__avatar person__avatar--blue" id="detailChoferAvatar">—</div>
+                <div class="person__info"><strong id="detailChofer">Sin asignar</strong><span id="detailVehiculo">—</span></div>
+                <span class="rating" id="detailRating">—</span>
+              </div>
+
+              <div class="timeline" id="detailTimeline"></div>
+
+              <div class="detail-total">
+                <div><span>Total estimado</span><strong id="detailPrecio">—</strong></div>
+                <button class="mini-map" id="mapaBtn" type="button" aria-label="Ver recorrido en el mapa">
+                  <svg viewBox="0 0 120 50"><path d="M0 40 L25 30 L50 34 L75 18 L100 22 L120 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="0" cy="40" r="3" fill="#11b247"/><circle cx="120" cy="8" r="3" fill="#ffb219"/></svg>
+                  <span>Ver mapa</span>
+                </button>
+              </div>
+              <div class="detail-actions">
+                <button class="btn btn--ghost btn--sm" id="compartirBtn" hidden>Compartir</button>
+                <button class="btn btn--ghost btn--sm" id="iniciarBtn" hidden>Iniciar</button>
+                <button class="btn btn--primary btn--sm" id="finalizarBtn" hidden>Finalizar</button>
+                <button class="btn btn--danger-ghost btn--sm" id="cancelarBtn" hidden>Cancelar</button>
+              </div>
+            </article>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           VIEW: RESERVAS (WhatsApp)
+           ============================================================ -->
+      <section class="view" id="view-reservas">
+        <div class="reservas-layout">
+          <article class="panel panel--light chat-panel">
+            <div class="chat-head">
+              <div class="chat-head__avatar">R</div>
+              <div class="chat-head__meta"><strong>REMIXT</strong><span id="chatStatus"><i class="online-dot"></i> En línea</span></div>
+              <button class="icon-btn icon-btn--sm" id="chatMenuBtn" aria-label="Vaciar conversación" title="Vaciar conversación"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/></svg></button>
+            </div>
+            <div class="chat-body" id="chatBody">
+              <div class="chat-day">HOY</div>
+            </div>
+            <form class="chat-input" id="chatForm">
+              <button type="button" class="icon-btn icon-btn--sm" id="chatTemplateBtn" aria-label="Insertar plantilla de reserva" title="Insertar plantilla"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+              <input type="text" id="chatText" placeholder="Escribí un mensaje..." autocomplete="off" />
+              <button type="submit" class="send-btn" aria-label="Enviar"><svg viewBox="0 0 24 24"><path d="m4 12 16-8-6 16-2.5-6.5L4 12Z" fill="currentColor"/></svg></button>
+            </form>
+          </article>
+
+          <aside class="reservas-side">
+            <article class="panel panel--light">
+              <div class="panel__head panel__head--tight"><div><h2>Reservas activas</h2><p class="panel__sub">Próximos 7 días</p></div></div>
+              <div id="reservasList"></div>
+            </article>
+            <article class="panel panel--light stats-mini">
+              <div><span class="stats-mini__num" id="reservasMes">0</span><span class="stats-mini__label">Reservas del mes</span></div>
+              <div><span class="stats-mini__num" id="reservasConfirmadasPct">0%</span><span class="stats-mini__label">Confirmadas</span></div>
+              <div><span class="stats-mini__num" id="reservasPendientes">0</span><span class="stats-mini__label">Pendientes</span></div>
+            </article>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           VIEW: CHOFERES
+           ============================================================ -->
+      <section class="view" id="view-choferes">
+        <div class="kpi-grid kpi-grid--3">
+          <article class="kpi-card kpi-card--light"><div class="kpi-card__icon kpi-card__icon--green"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5 20a7 7 0 0 1 14 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="kpi-card__body"><span class="kpi-card__label">Disponibles</span><div class="kpi-card__value kpi-card__value--dark" id="chofDisponibles">—</div></div></article>
+          <article class="kpi-card kpi-card--light"><div class="kpi-card__icon kpi-card__icon--blue"><svg viewBox="0 0 24 24"><path d="M5 17h14M6 17v2M18 17v2M4 13l1.6-5.2A2 2 0 0 1 7.5 6.5h9a2 2 0 0 1 1.9 1.3L20 13v3H4v-3Z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></div><div class="kpi-card__body"><span class="kpi-card__label">En viaje</span><div class="kpi-card__value kpi-card__value--dark" id="chofEnViaje">—</div></div></article>
+          <article class="kpi-card kpi-card--light"><div class="kpi-card__icon kpi-card__icon--amber"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="kpi-card__body"><span class="kpi-card__label">Viajes hoy</span><div class="kpi-card__value kpi-card__value--dark" id="chofViajesHoy">—</div></div></article>
+        </div>
+        <article class="panel panel--light">
+          <div class="panel__head"><div><h2>Choferes</h2><p class="panel__sub" id="choferesSub">Estado y disponibilidad de la flota</p></div><button class="btn btn--primary btn--sm" id="nuevoChoferBtn">+ Nuevo chofer</button></div>
+          <div class="table-wrap">
+            <table class="data-table data-table--light">
+              <thead><tr><th>Chofer</th><th>Vehículo</th><th>Patente</th><th>Estado</th><th>Viajes hoy</th><th>Rating</th><th>Acciones</th></tr></thead>
+              <tbody id="choferesBody"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <!-- ============================================================
+           VIEW: VEHÍCULOS
+           ============================================================ -->
+      <section class="view" id="view-vehiculos">
+        <article class="panel panel--light">
+          <div class="panel__head"><div><h2>Vehículos</h2><p class="panel__sub" id="vehiculosSub">Flota registrada</p></div><button class="btn btn--primary btn--sm" id="nuevoVehiculoBtn">+ Nuevo vehículo</button></div>
+          <div class="table-wrap">
+            <table class="data-table data-table--light">
+              <thead><tr><th>Vehículo</th><th>Patente</th><th>Chofer asignado</th><th>Estado</th><th>Último servicio</th><th>Acciones</th></tr></thead>
+              <tbody id="vehiculosBody"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <!-- ============================================================
+           VIEW: CLIENTES
+           ============================================================ -->
+      <section class="view" id="view-clientes">
+        <article class="panel panel--light">
+          <div class="panel__head"><div><h2>Clientes</h2><p class="panel__sub" id="clientesSub">—</p></div><button class="btn btn--primary btn--sm" id="nuevoClienteBtn">+ Nuevo cliente</button></div>
+          <div class="table-wrap">
+            <table class="data-table data-table--light">
+              <thead><tr><th>Cliente</th><th>Teléfono</th><th>Tipo</th><th>Viajes</th><th>Último viaje</th><th>Acciones</th></tr></thead>
+              <tbody id="clientesBody"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <!-- ============================================================
+           VIEW: LIQUIDACIONES (Administración)
+           ============================================================ -->
+      <section class="view" id="view-liquidaciones">
+        <div class="admin-tabs">
+          <button class="admin-tab is-active" data-admin-tab="resumen">Resumen</button>
+          <button class="admin-tab" data-admin-tab="liquidaciones">Liquidaciones</button>
+          <button class="admin-tab" data-admin-tab="facturacion">Facturación</button>
+          <button class="admin-tab" data-admin-tab="clientes">Clientes</button>
+          <button class="admin-tab" data-admin-tab="reportes">Reportes</button>
+          <div class="admin-tabs__date">
+            <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 10h18M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span id="adminDate">—</span>
+          </div>
+          <button class="btn btn--ghost btn--sm" id="exportPdfBtn">Exportar PDF</button>
+        </div>
+
+        <div id="adminResumen">
+          <div class="stat-row">
+            <div class="stat-box"><span class="stat-box__label">Viajes realizados</span><strong class="stat-box__value" id="adminViajes">—</strong><span class="stat-box__trend" id="adminViajesTrend">—</span></div>
+            <div class="stat-box"><span class="stat-box__label">Facturación</span><strong class="stat-box__value" id="adminFacturacion">—</strong><span class="stat-box__trend" id="adminFacturacionTrend">—</span></div>
+            <div class="stat-box"><span class="stat-box__label">Clientes activos</span><strong class="stat-box__value" id="adminClientes">—</strong><span class="stat-box__trend" id="adminClientesTrend">—</span></div>
+            <div class="stat-box"><span class="stat-box__label">Ocupación flota</span><strong class="stat-box__value" id="adminOcupacion">—</strong><span class="stat-box__trend" id="adminOcupacionTrend">—</span></div>
+          </div>
+
+          <div class="chart-grid">
+            <article class="panel panel--light">
+              <div class="panel__head panel__head--tight"><div><h2>Evolución de viajes</h2><p class="panel__sub">Últimas 24 horas</p></div><div class="legend"><span><i class="legend__dot legend__dot--blue"></i> Hoy</span></div></div>
+              <div class="bar-chart" id="barChart"></div>
+            </article>
+            <article class="panel panel--light">
+              <div class="panel__head panel__head--tight"><div><h2>Por tipo de servicio</h2><p class="panel__sub">Distribución de viajes</p></div></div>
+              <div class="donut-wrap">
+                <div class="donut"><div class="donut__center"><strong id="donutCenter">0</strong><span>viajes</span></div></div>
+                <ul class="donut-legend">
+                  <li><i style="background:#165be5"></i> Particular <strong id="donutParticular">0%</strong></li>
+                  <li><i style="background:#ffb219"></i> Corporativo <strong id="donutCorporativo">0%</strong></li>
+                  <li><i style="background:#11b247"></i> Reservas <strong id="donutReservas">0%</strong></li>
+                </ul>
+              </div>
+            </article>
+          </div>
+
+          <article class="panel panel--light">
+            <div class="panel__head panel__head--tight"><div><h2>Últimas liquidaciones</h2><p class="panel__sub" id="liquidacionesSub">—</p></div></div>
+            <div class="table-wrap">
+              <table class="data-table data-table--light">
+                <thead><tr><th>Chofer</th><th>Viajes</th><th>Ingresos</th><th>Comisión</th><th>A pagar</th><th>Estado</th><th>Acción</th></tr></thead>
+                <tbody id="liquidacionesBody"></tbody>
+              </table>
+            </div>
+          </article>
+        </div>
+
+        <div id="adminDetalle" hidden></div>
+      </section>
+
+      <!-- ============================================================
+           VIEW: INFORMES
+           ============================================================ -->
+      <section class="view" id="view-informes">
+        <div class="stat-row">
+          <div class="stat-box"><span class="stat-box__label">Viajes del mes</span><strong class="stat-box__value" id="infViajes">—</strong><span class="stat-box__trend" id="infViajesTrend">—</span></div>
+          <div class="stat-box"><span class="stat-box__label">Facturación total</span><strong class="stat-box__value" id="infFacturacion">—</strong><span class="stat-box__trend" id="infFacturacionTrend">—</span></div>
+          <div class="stat-box"><span class="stat-box__label">Ticket promedio</span><strong class="stat-box__value" id="infTicket">—</strong><span class="stat-box__trend" id="infTicketTrend">—</span></div>
+          <div class="stat-box"><span class="stat-box__label">Satisfacción</span><strong class="stat-box__value" id="infSatisfaccion">—</strong><span class="stat-box__trend" id="infSatisfaccionTrend">—</span></div>
+        </div>
+        <article class="panel panel--light">
+          <div class="panel__head"><div><h2>Informes disponibles</h2><p class="panel__sub">Descargá los reportes reales del sistema en formato CSV</p></div></div>
+          <div class="report-grid" id="reportGrid"></div>
+        </article>
+      </section>
+
+      <!-- ============================================================
+           VIEW: CONFIGURACIÓN
+           ============================================================ -->
+      <section class="view" id="view-configuracion">
+        <div class="admin-tabs">
+          <button class="admin-tab is-active" data-config-tab="tarifas">Tarifas</button>
+          <button class="admin-tab" data-config-tab="zonas">Zonas</button>
+          <button class="admin-tab" data-config-tab="choferes">Choferes</button>
+          <button class="admin-tab" data-config-tab="vehiculos">Vehículos</button>
+          <button class="admin-tab" data-config-tab="documentacion">Documentación</button>
+          <button class="admin-tab" data-config-tab="notificaciones">Notificaciones</button>
+          <button class="btn btn--primary btn--sm admin-tabs__right" id="nuevaTarifaBtn">+ Nueva Zona</button>
+        </div>
+
+        <div class="config-layout">
+          <article class="panel panel--light">
+            <div class="panel__head panel__head--tight"><div><h2 id="tarifasTitle">Tarifas por zona</h2><p class="panel__sub" id="tarifasSub">Cambios aplican desde el próximo viaje</p></div></div>
+            <div class="table-wrap">
+              <table class="data-table data-table--light">
+                <thead><tr><th>Zona</th><th>Tarifa base</th><th>Por km</th><th>Mínimo</th><th>Estado</th><th>Acciones</th></tr></thead>
+                <tbody id="tarifasBody"></tbody>
+              </table>
+            </div>
+          </article>
+          <aside class="panel panel--light config-side">
+            <div class="panel__head panel__head--tight"><div><h2>Preferencias</h2><p class="panel__sub">Se guardan en este navegador</p></div></div>
+            <div class="setting-row"><div><strong>Asignación automática</strong><span>Asignar chofer al crear una solicitud</span></div><label class="switch"><input type="checkbox" id="prefAutoAssign" /><span></span></label></div>
+            <div class="setting-row"><div><strong>Notificaciones WhatsApp</strong><span>Avisar al pasajero cada cambio</span></div><label class="switch"><input type="checkbox" id="prefWhatsapp" /><span></span></label></div>
+            <div class="setting-row"><div><strong>Modo corporativo</strong><span>Habilitar cuentas de empresa</span></div><label class="switch"><input type="checkbox" id="prefCorporate" /><span></span></label></div>
+            <div class="setting-row"><div><strong>GPS en tiempo real</strong><span>Mostrar el mapa del recorrido</span></div><label class="switch"><input type="checkbox" id="prefGps" /><span></span></label></div>
+          </aside>
+        </div>
+      </section>
+
+    </div><!-- /main-wrap -->
+  </div><!-- /app-shell -->
+
+  <!-- MODAL GENÉRICO -->
+  <div class="modal" id="modal" hidden>
+    <div class="modal__backdrop" data-modal-close></div>
+    <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <form id="modalForm">
+        <div class="modal__head">
+          <div>
+            <h2 id="modalTitle">—</h2>
+            <p id="modalSub"></p>
+          </div>
+          <button type="button" class="modal__close" data-modal-close aria-label="Cerrar">×</button>
+        </div>
+        <div class="modal__body" id="modalBody"></div>
+        <div class="modal__foot" id="modalFoot"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="config.js"></script>
+  <script src="pwa.js"></script>
+  <script src="auth.js"></script>
+  <script src="app.js"></script>
+</body>
 </html>

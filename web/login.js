@@ -27,6 +27,21 @@
     $('#loginError').hidden = true;
   }
 
+  function mostrarVersion() {
+    const elemento = $('#appVersion');
+    if (!elemento) return;
+    const fijar = (version) => {
+      if (version) elemento.textContent = `REMIXT v${version}`;
+      else elemento.hidden = true;
+    };
+    // En el APK el build puede inyectar REMIXT_VERSION; en la web se lee el package.json.
+    if (window.REMIXT_VERSION) { fijar(window.REMIXT_VERSION); return; }
+    fetch('package.json', { cache: 'no-store' })
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error('sin package.json'))))
+      .then((pkg) => fijar(pkg.version))
+      .catch(() => fijar(null));
+  }
+
   document.querySelector('.role-switch').addEventListener('click', (event) => {
     const boton = event.target.closest('button[data-rol]');
     if (!boton || boton.dataset.rol === rol) return;
@@ -60,6 +75,7 @@
     }
   });
 
+  mostrarVersion();
   if (Auth.leer(rol)) irAlInicio(rol);
   else aplicarRol();
 })();

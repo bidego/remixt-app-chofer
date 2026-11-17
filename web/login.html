@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#165be5" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="REMIXT" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="manifest" href="manifest.webmanifest" />
   <title>REMIXT · Ingresar</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%23165BE5%27/%3E%3Cpath d=%27M10 23V9h6a5 5 0 0 1 0 10h-3l5 4%27 fill=%27none%27 stroke=%27white%27 stroke-width=%272.4%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E" />
   <link rel="stylesheet" href="styles.css" />
@@ -47,7 +53,10 @@
     </div>
   </main>
 
+  <p class="app-version" id="appVersion" aria-label="Versión de REMIXT">REMIXT</p>
+
   <script src="config.js"></script>
+  <script src="pwa.js"></script>
   <script src="auth.js"></script>
   <script src="login.js"></script>
 </body>
