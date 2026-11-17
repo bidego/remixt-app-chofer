@@ -1,12 +1,16 @@
-/* REMIXT · Service Worker mínimo: app shell offline, API siempre en red. */
-const CACHE = 'remixt-shell-v3';
+/* REMIXT · Service Worker: network-first, cache offline, auto-update. */
+const CACHE = 'remixt-shell-v4';
 const SHELL = [
   './', './index.html', './login.html', './chofer.html', './pasajero.html',
-  './styles.css', './portal.css', './config.js',
+  './styles.css', './portal.css', './config.js', './version.js',
   './auth.js', './app.js', './login.js', './chofer.js', './portal.js',
   './manifest.webmanifest', './manifest-chofer.webmanifest',
   './apple-touch-icon.png', './icon-192.png', './icon-512.png',
 ];
+
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
+});
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -27,12 +31,12 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
-  // La API y el WebSocket nunca se cachean: van siempre a la red.
+  // La API y el WebSocket van siempre a la red, nunca se cachean.
   if (url.origin !== self.location.origin) return;
   if (url.pathname.endsWith('/ws')) return;
 
   event.respondWith(
-    fetch(event.request)
+    fetch(event.request, { cache: 'no-cache' })
       .then((response) => {
         if (response.ok) {
           const copy = response.clone();
