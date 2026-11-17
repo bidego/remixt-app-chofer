@@ -30,7 +30,10 @@ fs.writeFileSync(path.join(out, 'config.js'), config);
 const inject = '<script src="config.js"></script>\n  <script src="app-config.js"></script>\n  <script src="auth.js"></script>';
 for (const file of fs.readdirSync(out).filter((f) => f.endsWith('.html'))) {
   const file_path = path.join(out, file);
-  const html = fs.readFileSync(file_path, 'utf8');
+  // Si el HTML viene del repo web ya puede traer su config.js: lo sacamos para
+  // que no se duplique con el generado desde la variable de GitHub.
+  const html = fs.readFileSync(file_path, 'utf8')
+    .replace(/^[ \t]*<script src="(?:config|app-config)\.js"><\/script>\r?\n/gm, '');
   if (!html.includes('<script src="auth.js"></script>')) continue;
   fs.writeFileSync(file_path, html.replace('<script src="auth.js"></script>', inject));
 }

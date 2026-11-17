@@ -74,7 +74,9 @@ cp ../remixt-web/{chofer.html,login.html,auth.js,portal.js,chofer.js,login.js,st
 ```
 
 El build inyecta `config.js` y `app-config.js` antes de `auth.js`, así que los
-archivos copiados no necesitan modificaciones.
+archivos copiados no necesitan modificaciones. **No copiar `config.js` desde
+`remixt-web`**: ese archivo apunta al hosting web; el APK genera el suyo desde
+la variable de GitHub y el build quita cualquier `config.js` previo.
 
 ## Permisos y comportamiento
 
