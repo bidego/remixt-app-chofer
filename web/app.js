@@ -1210,9 +1210,11 @@ function openPasswordModal() {
 }
 
 function renderUsuario() {
-  const { nombre } = SESION.usuario;
+  const { nombre, organizacion } = SESION.usuario;
   $('#userAvatar').textContent = initials(nombre);
   $('#userNombre').textContent = nombre;
+  const org = $('#userOrg');
+  if (org) org.textContent = organizacion?.nombre || organizacion?.slug || 'Operador';
 }
 
 function openTarifaModal(tarifa = null) {

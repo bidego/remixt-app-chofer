@@ -6,7 +6,9 @@
     operador: { label: 'Email', type: 'email', placeholder: 'tu@email.com', sub: 'Acceso al panel de gestión y despacho.' },
     chofer: { label: 'Teléfono', type: 'tel', placeholder: '711 000 0000', sub: 'Ingresá con el teléfono registrado en tu ficha.' },
   };
-  let rol = new URLSearchParams(window.location.search).get('rol') === 'chofer' ? 'chofer' : 'operador';
+  const params = new URLSearchParams(window.location.search);
+  let rol = params.get('rol') === 'chofer' ? 'chofer' : 'operador';
+  const organizacion = params.get('org') || 'remixt';
 
   function irAlInicio(destino) {
     window.location.replace(Auth.HOME[destino]);
@@ -62,6 +64,7 @@
     try {
       const res = await Auth.api('POST', '/api/auth/login', {
         rol,
+        organizacion: $('#loginOrganizacion').value.trim(),
         usuario: $('#loginUsuario').value.trim(),
         password: $('#loginPassword').value,
       });
@@ -74,6 +77,10 @@
       boton.textContent = 'Ingresar';
     }
   });
+
+  $('#loginOrganizacion').value = organizacion;
+  const linkPasajero = $('.login__alt a[href^="pasajero.html"]');
+  if (linkPasajero) linkPasajero.href = `pasajero.html?org=${encodeURIComponent(organizacion)}`;
 
   mostrarVersion();
   if (Auth.leer(rol)) irAlInicio(rol);
