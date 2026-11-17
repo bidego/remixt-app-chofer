@@ -14,6 +14,19 @@
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
   }[c]));
 
+  function alturaDe(texto) {
+    const primera = String(texto ?? '').split(',')[0];
+    const encontrado = primera.match(/(?:^|\s)(\d{1,5})(?=\s|$)/);
+    return encontrado ? encontrado[1] : null;
+  }
+
+  function conservaAltura(texto, label) {
+    const altura = alturaDe(texto);
+    if (!altura) return true;
+    const patron = new RegExp(`(^|[\\s,])${altura}(?:$|[\\s,])`);
+    return patron.test(String(label ?? ''));
+  }
+
   function haversineKm(a, b) {
     if (!a || !b) return null;
     const rad = Math.PI / 180;
@@ -198,8 +211,10 @@
     lista.addEventListener('click', (event) => {
       const opcion = event.target.closest('[data-label]');
       if (!opcion) return;
+      const escrito = input.value.trim();
+      const sugerido = opcion.dataset.label;
       const dato = {
-        label: opcion.dataset.label,
+        label: conservaAltura(escrito, sugerido) ? sugerido : escrito,
         lat: Number(opcion.dataset.lat),
         lon: Number(opcion.dataset.lon),
       };
@@ -214,7 +229,8 @@
     if (!texto || texto.trim().length < 3) return null;
     try {
       const res = await Auth.api('GET', `/api/geo/geocode?q=${encodeURIComponent(texto.trim())}`);
-      return res.data || null;
+      if (!res.data) return null;
+      return { ...res.data, label: conservaAltura(texto, res.data.label) ? res.data.label : texto.trim().slice(0, 180) };
     } catch (err) {
       return null;
     }
