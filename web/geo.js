@@ -42,25 +42,46 @@
     return [Number(viaje.ultimaLat), Number(viaje.ultimaLon)];
   }
 
+  function origen(viaje) {
+    if (!viaje || !Number.isFinite(Number(viaje.origenLat)) || !Number.isFinite(Number(viaje.origenLon))) return null;
+    return [Number(viaje.origenLat), Number(viaje.origenLon)];
+  }
+
   function destino(viaje) {
     if (!viaje || !Number.isFinite(Number(viaje.destinoLat)) || !Number.isFinite(Number(viaje.destinoLon))) return null;
     return [Number(viaje.destinoLat), Number(viaje.destinoLon)];
+  }
+
+  /** Una posición a miles de km es GPS inválido: se descarta en vez de arruinar el ETA. */
+  function posicionConfiable(viaje) {
+    const actual = posicion(viaje);
+    if (!actual) return null;
+    const referencias = [origen(viaje), destino(viaje)].filter(Boolean);
+    if (!referencias.length) return actual;
+    const kmRuta = Number(viaje.ruta?.distanciaMetros) / 1000 || Number(viaje.distanciaKm) || 0;
+    const limite = Math.max(kmRuta * 2, 25);
+    return referencias.some((ref) => haversineKm(actual, ref) <= limite) ? actual : null;
   }
 
   function textoEta(viaje) {
     if (!viaje) return '';
     const dur = Number(viaje.ruta?.duracionSegundos);
     const dist = Number(viaje.ruta?.distanciaMetros);
-    const actual = posicion(viaje);
+    const actual = posicionConfiable(viaje);
     const fin = destino(viaje);
     if (actual && fin) {
       const km = haversineKm(actual, fin);
       const velocidad = dist > 0 && dur > 0 ? (dist / 1000) / (dur / 3600) : 25;
-      const min = Math.max(1, Math.round((km / velocidad) * 60));
+      const estimado = Math.max(1, Math.round((km / velocidad) * 60));
+      const tope = dur > 0 ? Math.ceil(dur / 60) * 2 : estimado;
+      const min = Math.min(estimado, tope);
       return `Chofer a ${new Intl.NumberFormat('es-AR', { maximumFractionDigits: 1 }).format(km)} km · llega en ~${min} min`;
     }
-    if (dur > 0) return `Recorrido estimado: ${Math.max(1, Math.round(dur / 60))} min`;
-    return 'Recorrido en vivo';
+    const estimadoRuta = dur > 0
+      ? Math.round(dur / 60)
+      : Math.max(1, Math.round(((Number(viaje.ruta?.distanciaMetros) / 1000 || Number(viaje.distanciaKm) || 5) / 25) * 60));
+    const sufijo = posicion(viaje) ? 'Ubicación del chofer sin señal · ' : '';
+    return `${sufijo}ETA estimado: ${Math.max(1, estimadoRuta)} min`;
   }
 
   function icono(texto, color) {
@@ -107,8 +128,15 @@
       if (enlace) {
         enlace.href = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(v.origen || '')}&destination=${encodeURIComponent(v.destino || '')}`;
       }
-      const latlng = posicion(v);
-      if (!latlng) return;
+      const latlng = posicionConfiable(v);
+      if (!latlng) {
+        if (marcadorChofer) {
+          mapa.removeLayer(marcadorChofer);
+          capas = capas.filter((capa) => capa !== marcadorChofer);
+          marcadorChofer = null;
+        }
+        return;
+      }
       if (!marcadorChofer) {
         marcadorChofer = L.marker(latlng, { icon: icono('R', COLORES.chofer), zIndexOffset: 1000 }).addTo(mapa);
         capas.push(marcadorChofer);

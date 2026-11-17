@@ -1,5 +1,5 @@
 /* REMIXT · Service Worker: network-first, cache offline, auto-update. */
-const CACHE = 'remixt-shell-v6';
+const CACHE = 'remixt-shell-v7';
 const SHELL = [
   './', './index.html', './login.html', './chofer.html', './pasajero.html',
   './styles.css', './portal.css', './config.js', './app-config.js', './version.js',
