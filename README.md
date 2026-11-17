@@ -1,8 +1,13 @@
-# REMIXT Chofer (Android)
+# REMIXT Chofer (Android + iPhone)
 
-App nativa para choferes: empaqueta `chofer.html` y `login.html` de
+App del chofer: empaqueta `chofer.html` y `login.html` de
 [remixt-web](https://github.com/bidego/remixt-web) con Capacitor. No tiene datos
 mockeados: consume la API de [remixt-api](https://github.com/bidego/remixt-api).
+
+En Android se instala el APK de abajo. En iPhone se puede usar **sin pagar Apple
+Developer** de dos formas: como PWA instalada desde Safari (recomendado, no vence)
+o con el proyecto Xcode de `ios/` (para probar nativo con un Apple ID gratis,
+vence a los 7 días).
 
 ## Descargar e instalar
 
@@ -71,6 +76,7 @@ Si cambiás la app web en `remixt-web`, actualizá `web/` con:
 
 ```bash
 cp ../remixt-web/{chofer.html,login.html,auth.js,portal.js,chofer.js,login.js,styles.css,portal.css} web/
+cp ../remixt-web/{manifest.webmanifest,apple-touch-icon.png,icon-192.png,icon-512.png,pwa.js,sw.js} web/
 ```
 
 El build inyecta `config.js` y `app-config.js` antes de `auth.js`, así que los
@@ -87,6 +93,47 @@ la variable de GitHub y el build quita cualquier `config.js` previo.
 - La sesión del chofer se guarda en `localStorage` del WebView (`remixt:sesion:chofer`).
 - El apk es un **debug build**: se puede instalar por sideload, pero no está
   firmado con una clave de release ni es apto para Google Play.
+
+## iPhone sin Apple Developer: PWA
+
+La web de [remixt.vyronxt.com](https://remixt.vyronxt.com) es instalable desde
+Safari. No requiere cuenta de desarrollador ni CAD, y **no vence**:
+
+1. Abrir `https://remixt.vyronxt.com/chofer.html` en Safari.
+2. Tocar **Compartir** → **Agregar a la pantalla de inicio**.
+3. Confirmar el nombre `REMIXT`. Se abre a pantalla completa con el icono propio.
+
+Los archivos que hacen posible la instalación son `manifest.webmanifest`,
+`apple-touch-icon.png`, `icon-192.png`, `icon-512.png` y los meta tags
+`apple-mobile-web-app-capable` / `theme-color` presentes en todos los HTML.
+
+Limitaciones de una PWA en iOS: el websocket se mantiene mientras la app está
+abierta y las notificaciones push quedan para una versión futura con certificados.
+
+## iPhone nativo con Apple ID gratis (7 días)
+
+El scaffold Capacitor ya está en `ios/`. En una Mac con Xcode:
+
+```bash
+npm ci
+npm run build:web        # genera www/ con la API de REMIXT_API_URL
+npx cap sync ios
+open ios/App/App.xcodeproj
+```
+
+En Xcode:
+
+1. Seleccionar el target **App** → *Signing* → marcar *Automatically manage signing*.
+2. Elegir tu **Personal Team** (Apple ID gratuito, sin Apple Developer Program).
+3. Conectar el iPhone por USB y seleccionarlo como destino.
+4. *Run* (⌘R). Si el bundle identifier ya está registrado, cambiarlo en
+   *General → Identity → Bundle Identifier*.
+
+El perfil gratuito **expira a los 7 días**: pasado ese tiempo hay que volver a
+correr desde Xcode (o borrar y reinstalar la app). Para TestFlight o App Store
+sí hace falta el programa de pago; esta vía es solo para prueba local.
+
+Si preferís no instalar Xcode, usá directamente la PWA de la sección anterior.
 
 ## Reproducir el Release
 

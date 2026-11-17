@@ -6,6 +6,7 @@
   "scripts": {
     "build:web": "node scripts/build-web.js",
     "sync": "cap sync android",
+    "sync:ios": "cap sync ios",
     "build:android": "cd android && ./gradlew assembleDebug",
     "build": "npm run build:web && npm run sync && npm run build:android && node scripts/copy-apk.js",
     "dev": "npm run build:web && cap serve"
@@ -13,7 +14,8 @@
   "devDependencies": {
     "@capacitor/android": "^8.6.2",
     "@capacitor/cli": "^8.6.2",
-    "@capacitor/core": "^8.6.2"
+    "@capacitor/core": "^8.6.2",
+    "@capacitor/ios": "^8.6.2"
   },
   "engines": {
     "node": ">=20"
