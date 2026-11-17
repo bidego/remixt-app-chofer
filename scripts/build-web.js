@@ -25,6 +25,13 @@ const config = [
 ].join('\n');
 fs.writeFileSync(path.join(out, 'config.js'), config);
 
+// La versión del APK sale de package.json (el login la muestra abajo).
+const version = require('../package.json').version;
+fs.writeFileSync(
+  path.join(out, 'version.js'),
+  `/* Generado por scripts/build-web.js. No editar a mano. */\nwindow.REMIXT_VERSION = ${JSON.stringify(version)};\n`,
+);
+
 // Inyectamos la configuración antes de auth.js sin modificar los archivos web
 // originales (así se pueden copiar tal cual desde el repo remixt-web).
 const inject = '<script src="config.js"></script>\n  <script src="app-config.js"></script>\n  <script src="auth.js"></script>';
