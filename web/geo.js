@@ -37,19 +37,24 @@
     return 6371 * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
   }
 
+  // Number(null) y Number('') dan 0: sin este helper, un dato ausente se ve como (0,0).
+  function numero(valor) {
+    return valor == null || valor === '' ? NaN : Number(valor);
+  }
+
   function posicion(viaje) {
-    if (!viaje || !Number.isFinite(Number(viaje.ultimaLat)) || !Number.isFinite(Number(viaje.ultimaLon))) return null;
-    return [Number(viaje.ultimaLat), Number(viaje.ultimaLon)];
+    if (!viaje || !Number.isFinite(numero(viaje.ultimaLat)) || !Number.isFinite(numero(viaje.ultimaLon))) return null;
+    return [numero(viaje.ultimaLat), numero(viaje.ultimaLon)];
   }
 
   function origen(viaje) {
-    if (!viaje || !Number.isFinite(Number(viaje.origenLat)) || !Number.isFinite(Number(viaje.origenLon))) return null;
-    return [Number(viaje.origenLat), Number(viaje.origenLon)];
+    if (!viaje || !Number.isFinite(numero(viaje.origenLat)) || !Number.isFinite(numero(viaje.origenLon))) return null;
+    return [numero(viaje.origenLat), numero(viaje.origenLon)];
   }
 
   function destino(viaje) {
-    if (!viaje || !Number.isFinite(Number(viaje.destinoLat)) || !Number.isFinite(Number(viaje.destinoLon))) return null;
-    return [Number(viaje.destinoLat), Number(viaje.destinoLon)];
+    if (!viaje || !Number.isFinite(numero(viaje.destinoLat)) || !Number.isFinite(numero(viaje.destinoLon))) return null;
+    return [numero(viaje.destinoLat), numero(viaje.destinoLon)];
   }
 
   /** Una posición a miles de km es GPS inválido: se descarta en vez de arruinar el ETA. */
